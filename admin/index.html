@@ -1400,7 +1400,7 @@ async function guardarEnGitHub(json) {
   const putRes = await fetch(apiBase, {
     method: 'PUT',
     headers: {
-      'Authorization: `token ${token}``,
+      'Authorization: `token ${token}`,
       'Accept': 'application/vnd.github+json',
       'Content-Type': 'application/json'
     },
