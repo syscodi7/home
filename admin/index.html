@@ -1379,7 +1379,7 @@ async function guardarEnGitHub(json) {
   try {
     const getRes = await fetch(`${apiBase}?ref=${branch}&t=${Date.now()}`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization: `token ${token}`,
         'Accept': 'application/vnd.github+json',
         'Cache-Control': 'no-cache'
       }
@@ -1400,7 +1400,7 @@ async function guardarEnGitHub(json) {
   const putRes = await fetch(apiBase, {
     method: 'PUT',
     headers: {
-      'Authorization': `Bearer ${token}`,
+      'Authorization: `token ${token}``,
       'Accept': 'application/vnd.github+json',
       'Content-Type': 'application/json'
     },
@@ -1509,7 +1509,7 @@ async function probarGHConfig() {
   if (!token || !repo) { toast('Completa el token y el repositorio primero', true); return; }
   try {
     const res = await fetch(`https://api.github.com/repos/${repo}/contents/data/contenido.json?ref=${branch}`, {
-      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' }
+      headers: { 'Authorization: `token ${token}``, 'Accept': 'application/vnd.github+json' }
     });
     if (res.status === 200) {
       toast('✓ Conexion exitosa. Archivo encontrado en el repo.');
