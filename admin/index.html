@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — SYS CODI7</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c9a84c; --gold-light: #e8c96d; --gold-dim: rgba(201,168,76,0.12);
+  --bg: #080808; --bg2: #0f0f0f; --bg3: #141414; --bg4: #1a1a1a;
+  --white: #f0ece4; --muted: #5a5a5a; --border: #1e1e1e;
+  --danger: #ef4444; --success: #22c55e;
+  --sidebar: 240px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--white); display: flex; }
+
+/* ===== DISEÑO TABS ===== */
+.dtab {
+  flex: 1; background: var(--bg3); border: none; border-right: 1px solid var(--border);
+  padding: 11px 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--muted); cursor: pointer;
+  transition: all 0.2s;
+}
+.dtab:last-child { border-right: none; }
+.dtab:hover { color: var(--white); background: var(--bg4); }
+.dtab.active { color: var(--gold); background: var(--bg2); border-bottom: 2px solid var(--gold); }
+
+/* ===== TEMAS GRID ===== */
+.temas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 0.5rem; }
+.tema-card {
+  border: 2px solid var(--border); border-radius: 6px; overflow: hidden; cursor: pointer;
+  transition: all 0.25s; position: relative;
+}
+.tema-card:hover { border-color: rgba(201,168,76,0.4); transform: translateY(-2px); }
+.tema-card.active { border-color: var(--gold); }
+.tema-card.active::after {
+  content: '✓ ACTIVO'; position: absolute; top: 8px; right: 8px;
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px;
+  background: var(--gold); color: #000; padding: 3px 8px; border-radius: 2px;
+}
+.tema-preview { height: 90px; position: relative; overflow: hidden; }
+.tema-preview-nav { height: 18px; display: flex; align-items: center; padding: 0 8px; gap: 4px; }
+.tema-preview-dot { width: 4px; height: 4px; border-radius: 50%; }
+.tema-preview-hero { padding: 6px 8px; }
+.tema-preview-label { height: 4px; border-radius: 2px; margin-bottom: 4px; }
+.tema-preview-title { height: 9px; border-radius: 2px; margin-bottom: 3px; width: 75%; }
+.tema-preview-sub { height: 4px; border-radius: 2px; width: 55%; }
+.tema-info { padding: 10px 12px; background: var(--bg3); }
+.tema-nombre { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1px; color: var(--white); text-transform: uppercase; }
+.tema-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.tema-palette { display: flex; gap: 4px; margin-top: 6px; }
+.tema-palette-dot { width: 12px; height: 12px; border-radius: 50%; }
+
+/* ===== PREVIEW CARD ===== */
+.tema-preview-card { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: #080808; }
+.tprev-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.tprev-logo { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 3px; }
+.tprev-navlink { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; color: #555; text-transform: uppercase; }
+.tprev-btn { color: var(--gold); border: 1px solid currentColor; padding: 4px 10px; border-radius: 2px; }
+.tprev-hero { padding: 28px 20px 20px; }
+.tprev-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; margin-bottom: 10px; }
+.tprev-h1, .tprev-h1b { font-family: 'Bebas Neue', sans-serif; font-size: 44px; line-height: 1; letter-spacing: 2px; }
+.tprev-h1b { margin-bottom: 12px; }
+.tprev-sub { font-size: 13px; color: rgba(240,236,228,0.5); max-width: 400px; margin-bottom: 16px; line-height: 1.6; }
+.tprev-metrics { display: flex; gap: 24px; }
+.tprev-metric { display: flex; flex-direction: column; }
+.tprev-mn { font-family: 'Bebas Neue', sans-serif; font-size: 24px; }
+.tprev-ml { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; color: #555; text-transform: uppercase; }
+.tprev-services { display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,0.05); }
+.tprev-svc { flex: 1; padding: 12px 16px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; color: #555; text-transform: uppercase; border-right: 1px solid rgba(255,255,255,0.05); }
+.tprev-svc:last-child { border-right: none; }
+
+/* ===== EFECTOS GRID ===== */
+.efecto-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
+.efecto-card { border: 2px solid var(--border); border-radius: 4px; overflow: hidden; cursor: pointer; transition: all 0.2s; }
+.efecto-card:hover { border-color: rgba(201,168,76,0.3); }
+.efecto-card.active { border-color: var(--gold); }
+.efecto-prev { height: 52px; }
+.efecto-name { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; padding: 5px 6px; background: var(--bg3); }
+
+/* LOGIN */
+#loginScreen {
+  position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+}
+.login-box {
+  width: 380px; padding: 3rem; border: 1px solid var(--border); border-radius: 4px;
+  background: var(--bg2);
+}
+.login-logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 4px; color: var(--white); margin-bottom: 0.25rem; }
+.login-logo em { color: var(--gold); font-style: normal; }
+.login-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 2.5rem; }
+.login-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; display: block; margin-bottom: 6px; }
+.login-input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 2px;
+  padding: 12px 14px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 14px;
+  outline: none; transition: border-color 0.2s; margin-bottom: 1.25rem;
+}
+.login-input:focus { border-color: rgba(201,168,76,0.4); }
+.login-btn {
+  width: 100%; background: var(--gold); color: var(--bg); border: none; padding: 14px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  border-radius: 2px; cursor: pointer; transition: background 0.2s;
+}
+.login-btn:hover { background: var(--gold-light); }
+.login-err { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--danger); margin-top: 1rem; display: none; }
+
+/* LAYOUT */
+.sidebar {
+  width: var(--sidebar); min-height: 100vh; background: var(--bg2);
+  border-right: 1px solid var(--border); display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 10;
+}
+.sidebar-logo {
+  padding: 1.5rem; border-bottom: 1px solid var(--border);
+  font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 3px;
+}
+.sidebar-logo em { color: var(--gold); font-style: normal; }
+.sidebar-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
+
+.sidebar-nav { flex: 1; padding: 1rem 0; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 1.5rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1px;
+  color: var(--muted); text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+  border-left: 2px solid transparent;
+}
+.nav-item:hover { color: var(--white); background: var(--bg3); }
+.nav-item.active { color: var(--gold); border-left-color: var(--gold); background: var(--gold-dim); }
+.nav-item .icon { font-size: 14px; width: 20px; text-align: center; }
+
+.sidebar-footer { padding: 1.5rem; border-top: 1px solid var(--border); }
+.sidebar-user { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-bottom: 8px; }
+.logout-btn {
+  background: none; border: 1px solid var(--border); color: var(--muted); padding: 8px 14px;
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+  border-radius: 2px; cursor: pointer; transition: all 0.2s; width: 100%;
+}
+.logout-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+.main {
+  margin-left: var(--sidebar); flex: 1; display: flex; flex-direction: column; min-height: 100vh;
+}
+.topbar {
+  padding: 1.25rem 2rem; border-bottom: 1px solid var(--border);
+  background: var(--bg2); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 5;
+}
+.topbar-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; }
+.topbar-actions { display: flex; gap: 0.75rem; }
+.btn-save {
+  background: var(--gold); color: var(--bg); border: none; padding: 10px 22px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  border-radius: 2px; cursor: pointer; transition: background 0.2s;
+}
+.btn-save:hover { background: var(--gold-light); }
+.btn-preview {
+  background: none; color: var(--muted); border: 1px solid var(--border); padding: 10px 22px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  border-radius: 2px; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center;
+}
+.btn-preview:hover { border-color: var(--gold); color: var(--gold); }
+
+.content { padding: 2rem; flex: 1; }
+
+/* PANELS */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* CARDS */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 1.5rem; }
+.stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--gold); line-height: 1; }
+.stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-top: 4px; }
+.stat-note { font-size: 12px; color: #444; margin-top: 8px; }
+
+/* FORMS */
+.section-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+.field-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1.25rem; }
+.field-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+.field-input, .field-textarea, .field-select {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 2px; padding: 12px 14px;
+  color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; width: 100%;
+}
+.field-input:focus, .field-textarea:focus, .field-select:focus { border-color: rgba(201,168,76,0.4); }
+.field-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+.field-hint { font-size: 12px; color: #444; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+/* CARD LIST */
+.card-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.card-item {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 1.25rem 1.5rem;
+  display: flex; align-items: center; gap: 1rem; transition: border-color 0.2s;
+}
+.card-item:hover { border-color: rgba(201,168,76,0.2); }
+.card-drag { color: var(--muted); cursor: grab; font-size: 16px; }
+.card-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); width: 28px; }
+.card-icon { font-size: 20px; }
+.card-info { flex: 1; }
+.card-title-text { font-size: 14px; font-weight: 500; }
+.card-sub { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+.card-actions { display: flex; gap: 0.5rem; align-items: center; }
+.toggle { position: relative; width: 36px; height: 20px; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0; background: var(--bg4); border-radius: 20px;
+  cursor: pointer; transition: background 0.3s;
+}
+.toggle-slider::before {
+  content: ''; position: absolute; left: 2px; top: 2px; width: 16px; height: 16px;
+  background: var(--muted); border-radius: 50%; transition: all 0.3s;
+}
+.toggle input:checked + .toggle-slider { background: var(--gold-dim); }
+.toggle input:checked + .toggle-slider::before { background: var(--gold); transform: translateX(16px); }
+.btn-edit {
+  background: none; border: 1px solid var(--border); color: var(--muted); padding: 6px 12px;
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+  border-radius: 2px; cursor: pointer; transition: all 0.2s;
+}
+.btn-edit:hover { border-color: var(--gold); color: var(--gold); }
+.btn-del {
+  background: none; border: 1px solid var(--border); color: var(--muted); padding: 6px 12px;
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; border-radius: 2px; cursor: pointer; transition: all 0.2s;
+}
+.btn-del:hover { border-color: var(--danger); color: var(--danger); }
+.btn-add {
+  background: none; border: 1px dashed var(--border); color: var(--muted); padding: 14px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  border-radius: 2px; cursor: pointer; transition: all 0.2s; width: 100%; margin-top: 0.75rem;
+}
+.btn-add:hover { border-color: var(--gold); color: var(--gold); }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200;
+  display: none; align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+  width: 560px; max-width: 95vw; max-height: 90vh; overflow-y: auto; padding: 2rem;
+}
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+.modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; }
+.modal-close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; transition: color 0.2s; }
+.modal-close:hover { color: var(--white); }
+.modal-footer { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+  background: var(--bg2); border: 1px solid var(--gold); border-radius: 4px;
+  padding: 1rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  color: var(--gold); letter-spacing: 1px; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+.toast.show { opacity: 1; }
+.toast.error { border-color: var(--danger); color: var(--danger); }
+
+/* COLOR PICKER */
+.color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+.color-field { display: flex; flex-direction: column; gap: 6px; }
+.color-preview-wrap { display: flex; align-items: center; gap: 10px; background: var(--bg3); border: 1px solid var(--border); border-radius: 2px; padding: 8px 12px; transition: border-color 0.2s; }
+.color-preview-wrap:focus-within { border-color: rgba(201,168,76,0.4); }
+.color-swatch { width: 28px; height: 28px; border-radius: 4px; border: 1px solid #333; cursor: pointer; flex-shrink: 0; }
+.color-hex { background: none; border: none; color: var(--white); font-family: 'JetBrains Mono', monospace; font-size: 13px; outline: none; width: 100%; letter-spacing: 1px; }
+.color-native { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+/* LOGO UPLOAD */
+.logo-upload-zone {
+  border: 2px dashed var(--border); border-radius: 4px; padding: 2.5rem; text-align: center;
+  cursor: pointer; transition: all 0.3s; background: var(--bg3); position: relative;
+}
+.logo-upload-zone:hover { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+.logo-upload-zone.has-logo { border-style: solid; border-color: rgba(201,168,76,0.3); }
+.logo-preview-img { max-height: 80px; max-width: 260px; object-fit: contain; display: none; margin: 0 auto 1rem; }
+.logo-upload-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+.logo-upload-sub { font-size: 12px; color: #333; margin-top: 6px; }
+.logo-tipo-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+.logo-tab { background: none; border: 1px solid var(--border); color: var(--muted); padding: 8px 18px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; border-radius: 2px; cursor: pointer; transition: all 0.2s; }
+.logo-tab.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+.live-preview-bar { background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+.live-preview-nav { display: flex; align-items: center; gap: 14px; }
+.preview-hex-box { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; border: 1px solid rgba(255,255,255,0.15); }
+.preview-brand-text { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 3px; }
+.preview-palette { display: flex; gap: 6px; }
+.palette-dot { width: 22px; height: 22px; border-radius: 50%; border: 1px solid #333; }
+.btn-reset-colors { background: none; border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; border-radius: 2px; cursor: pointer; transition: all 0.2s; }
+.btn-reset-colors:hover { border-color: var(--danger); color: var(--danger); }
+
+.metrics-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* IMG PREVIEW */
+.img-preview { width: 100%; height: 80px; object-fit: cover; border-radius: 2px; margin-top: 6px; background: var(--bg4); border: 1px solid var(--border); }
+
+/* SWITCH ROW */
+.switch-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.switch-label { font-size: 14px; }
+.switch-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">SYS <em>CODI7</em></div>
+    <div class="login-sub">Panel de administración</div>
+    <label class="login-label" for="luser">Usuario</label>
+    <input class="login-input" id="luser" type="text" placeholder="admin" />
+    <label class="login-label" for="lpass">Contraseña</label>
+    <input class="login-input" id="lpass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" />
+    <button class="login-btn" onclick="doLogin()">Ingresar →</button>
+    <div class="login-err" id="loginErr">Credenciales incorrectas.</div>
+    <div style="margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:10px;color:#333;">Demo: admin / iz0p6mr7vT0E</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Editar</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn-preview" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveModal()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">SYS <em>CODI7</em><div class="sidebar-tag">Admin Panel</div></div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active" onclick="showPanel('dashboard')">
+      <span class="icon">◈</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPanel('empresa')">
+      <span class="icon">⬡</span> Empresa
+    </div>
+    <div class="nav-item" onclick="showPanel('servicios')">
+      <span class="icon">⬢</span> Servicios
+    </div>
+    <div class="nav-item" onclick="showPanel('portafolio')">
+      <span class="icon">◻</span> Portafolio
+    </div>
+    <div class="nav-item" onclick="showPanel('valores')">
+      <span class="icon">◈</span> Valores
+    </div>
+    <div class="nav-item" onclick="showPanel('contacto')">
+      <span class="icon">◯</span> Contacto
+    </div>
+    <div class="nav-item" onclick="showPanel('metricas')">
+      <span class="icon">△</span> Métricas
+    </div>
+    <div class="nav-item" onclick="showPanel('diseno')">
+      <span class="icon">◉</span> Diseño
+    </div>
+    <div class="nav-item" onclick="showPanel('seguridad')">
+      <span class="icon">◈</span> Seguridad
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user" id="sidebarUser">admin</div>
+    <button class="logout-btn" onclick="doLogout()">Cerrar sesión</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    <div class="topbar-actions">
+      <a href="../index.html" target="_blank" class="btn-preview">↗ Ver sitio</a>
+      <button class="btn-save" onclick="guardarTodo()">💾 Guardar cambios</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stat-grid" id="statGrid"></div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1.5rem;">
+        <div class="section-title">Accesos rápidos</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+          <button class="btn-add" style="margin:0" onclick="showPanel('empresa')">✏ Editar empresa</button>
+          <button class="btn-add" style="margin:0" onclick="showPanel('portafolio')">+ Agregar proyecto</button>
+          <button class="btn-add" style="margin:0" onclick="showPanel('servicios')">⚙ Gestionar servicios</button>
+        </div>
+        <div style="margin-top:1.5rem;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:2;">
+          <div>📁 Arquitectura del proyecto:</div>
+          <div style="color:#333;margin-top:8px;">
+            syscodi7/<br>
+            ├── index.html &nbsp;&nbsp;&nbsp;&nbsp;← Sitio público<br>
+            ├── data/<br>
+            │&nbsp;&nbsp;&nbsp;└── contenido.json &nbsp;← Datos editables<br>
+            ├── assets/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← Imágenes, CSS, JS<br>
+            ├── admin/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← Este panel<br>
+            │&nbsp;&nbsp;&nbsp;├── index.html<br>
+            │&nbsp;&nbsp;&nbsp;└── guardar.php &nbsp;&nbsp;← API de guardado<br>
+            ├── robots.txt<br>
+            └── sitemap.xml
+          </div>
+          <div style="margin-top:1rem;color:#444;">
+            Con PHP activo: haz clic en <strong style="color:var(--muted)">Guardar cambios</strong> y el sitio se actualiza al instante.<br>
+            Sin PHP (hosting estático): se descarga el archivo y lo subes por FTP/cPanel.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPRESA -->
+    <div class="panel" id="panel-empresa">
+      <div class="section-title">Información de la empresa</div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Nombre</label>
+          <input class="field-input" id="e-nombre" type="text" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Slogan</label>
+          <input class="field-input" id="e-slogan" type="text" />
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Descripción hero</label>
+        <textarea class="field-textarea" id="e-descripcion"></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Etiqueta del hero (tag)</label>
+        <input class="field-input" id="e-hero_tag" type="text" />
+      </div>
+      <div class="field-row-3">
+        <div class="field-group">
+          <label class="field-label">Título hero — línea 1</label>
+          <input class="field-input" id="e-hero_titulo_1" type="text" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Línea 2 (dorado)</label>
+          <input class="field-input" id="e-hero_titulo_2" type="text" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Línea 3 (outline)</label>
+          <input class="field-input" id="e-hero_titulo_3" type="text" />
+        </div>
+      </div>
+      <div class="section-title" style="margin-top:2rem;">Historia</div>
+      <div class="field-group">
+        <label class="field-label">Párrafo 1</label>
+        <textarea class="field-textarea" id="e-historia"></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Párrafo 2</label>
+        <textarea class="field-textarea" id="e-historia2"></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Años en el mercado (badge)</label>
+        <input class="field-input" id="e-anios" type="text" style="max-width:200px" />
+      </div>
+    </div>
+
+    <!-- SERVICIOS -->
+    <div class="panel" id="panel-servicios">
+      <div class="section-title">Servicios</div>
+      <div class="card-list" id="servicesList"></div>
+      <button class="btn-add" onclick="addServicio()">+ Agregar servicio</button>
+    </div>
+
+    <!-- PORTAFOLIO -->
+    <div class="panel" id="panel-portafolio">
+      <div class="section-title">Proyectos del portafolio</div>
+      <div class="card-list" id="portfolioList"></div>
+      <button class="btn-add" onclick="addProyecto()">+ Agregar proyecto</button>
+    </div>
+
+    <!-- VALORES -->
+    <div class="panel" id="panel-valores">
+      <div class="section-title">Valores de la empresa</div>
+      <div class="card-list" id="valoresList"></div>
+      <button class="btn-add" onclick="addValor()">+ Agregar valor</button>
+    </div>
+
+    <!-- CONTACTO -->
+    <div class="panel" id="panel-contacto">
+      <div class="section-title">Información de contacto</div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Correo electrónico</label>
+          <input class="field-input" id="c-correo" type="email" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">WhatsApp (con código país)</label>
+          <input class="field-input" id="c-whatsapp" type="text" placeholder="+51 999 999 999" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">URL de WhatsApp</label>
+          <input class="field-input" id="c-whatsapp_url" type="text" placeholder="https://wa.me/51999999999" />
+          <span class="field-hint">Formato: https://wa.me/[código_país][número]</span>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Ubicación</label>
+          <input class="field-input" id="c-ubicacion" type="text" />
+        </div>
+      </div>
+      <div class="section-title" style="margin-top:2rem;">Servicios en el formulario</div>
+      <div class="field-group">
+        <label class="field-label">Opciones (una por línea)</label>
+        <textarea class="field-textarea" id="sf-lista" style="min-height:140px;"></textarea>
+        <span class="field-hint">Cada línea es una opción del selector en el formulario de contacto.</span>
+      </div>
+      <div class="section-title" style="margin-top:2rem;">Marquee (banda dorada)</div>
+      <div class="field-group">
+        <label class="field-label">Palabras (una por línea)</label>
+        <textarea class="field-textarea" id="mq-lista" style="min-height:120px;"></textarea>
+      </div>
+    </div>
+
+    <!-- MÉTRICAS -->
+    <div class="panel" id="panel-metricas">
+      <div class="section-title">Métricas del hero</div>
+      <div class="card-list" id="metricasList"></div>
+      <button class="btn-add" onclick="addMetrica()">+ Agregar métrica</button>
+    </div>
+
+
+    <!-- DISEÑO -->
+    <div class="panel" id="panel-diseno">
+
+      <!-- TABS DE SECCIONES DE DISEÑO -->
+      <div class="diseno-tabs" style="display:flex;gap:0;margin-bottom:2rem;border:1px solid var(--border);border-radius:4px;overflow:hidden;">
+        <button class="dtab active" id="dtab-temas" onclick="showDTab('temas')">🎨 Temas</button>
+        <button class="dtab" id="dtab-colores" onclick="showDTab('colores')">🎡 Colores</button>
+        <button class="dtab" id="dtab-tipografia" onclick="showDTab('tipografia')">✍️ Tipografía</button>
+        <button class="dtab" id="dtab-efectos" onclick="showDTab('efectos')">✨ Efectos</button>
+        <button class="dtab" id="dtab-logo" onclick="showDTab('logo')">🏷️ Logo</button>
+      </div>
+
+      <!-- ===== TAB: TEMAS ===== -->
+      <div class="dtab-panel" id="dpanel-temas">
+        <div class="section-title">Elige un tema visual</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:1.5rem;">
+          Selecciona un tema base y luego personaliza cada detalle en las otras pestañas.
+        </div>
+        <div class="temas-grid" id="temasGrid"></div>
+
+        <!-- Preview del tema activo -->
+        <div style="margin-top:2rem;">
+          <div class="section-title">Vista previa del tema activo</div>
+          <div class="tema-preview-card" id="temaPreviewCard">
+            <div class="tprev-nav">
+              <span class="tprev-logo" id="tprev-logo">SYS CODI7</span>
+              <div style="display:flex;gap:10px;">
+                <span class="tprev-navlink">Servicios</span>
+                <span class="tprev-navlink">Portafolio</span>
+                <span class="tprev-navlink tprev-btn" id="tprev-btn">Contacto</span>
+              </div>
+            </div>
+            <div class="tprev-hero">
+              <div class="tprev-tag" id="tprev-tag">Desarrollo de software · Ica, Perú</div>
+              <div class="tprev-h1" id="tprev-h1"><span>Transfor</span><span id="tprev-accent">mamos</span></div>
+              <div class="tprev-h1" id="tprev-h1b">ideas</div>
+              <div class="tprev-sub" id="tprev-sub">Código limpio, sistemas robustos y soluciones que escalan.</div>
+              <div class="tprev-metrics">
+                <div class="tprev-metric"><span class="tprev-mn" id="tprev-mn">50+</span><span class="tprev-ml">Proyectos</span></div>
+                <div class="tprev-metric"><span class="tprev-mn">30+</span><span class="tprev-ml">Clientes</span></div>
+                <div class="tprev-metric"><span class="tprev-mn">5+</span><span class="tprev-ml">Años</span></div>
+              </div>
+            </div>
+            <div class="tprev-services" id="tprev-services">
+              <div class="tprev-svc">🌐 Desarrollo Web</div>
+              <div class="tprev-svc">📱 Apps Móviles</div>
+              <div class="tprev-svc">🖥️ Sistemas a Medida</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB: COLORES ===== -->
+      <div class="dtab-panel" id="dpanel-colores" style="display:none;">
+        <!-- Preview en vivo -->
+        <div class="live-preview-bar">
+          <div class="live-preview-nav">
+            <div class="preview-hex-box" id="prev-hex-box" style="border-color:var(--gold);color:var(--gold);">&lt;7&gt;</div>
+            <div id="prev-logo-img-wrap" style="display:none;">
+              <img id="prev-logo-img" src="" alt="logo" style="height:34px;object-fit:contain;" />
+            </div>
+            <div class="preview-brand-text" id="prev-brand">SYS <em style="font-style:normal;color:var(--gold)">CODI7</em></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:1rem;">
+            <div class="preview-palette">
+              <div class="palette-dot" id="prev-dot1" title="Color primario"></div>
+              <div class="palette-dot" id="prev-dot2" title="Color primario claro"></div>
+              <div class="palette-dot" id="prev-dot3" title="Color acento"></div>
+              <div class="palette-dot" id="prev-dot4" title="Fondo"></div>
+              <div class="palette-dot" id="prev-dot5" title="Texto" style="border:1px solid #555;"></div>
+            </div>
+            <button class="btn-reset-colors" onclick="resetColores()">↺ Restaurar</button>
+          </div>
+        </div>
+
+        <div class="section-title">Paleta de colores</div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1.5rem;margin-bottom:2rem;">
+          <div class="color-grid">
+            <div class="color-field">
+              <label class="field-label">Color primario</label>
+              <div class="color-preview-wrap">
+                <input type="color" class="color-native" id="native-c1" oninput="syncColor('c1',this.value)" />
+                <div class="color-swatch" id="swatch-c1" onclick="document.getElementById('native-c1').click()" title="Clic para cambiar"></div>
+                <input class="color-hex" id="hex-c1" type="text" maxlength="7" placeholder="#c9a84c" oninput="onHexInput('c1',this.value)" />
+              </div>
+              <div class="field-hint">Botones, acentos principales</div>
+            </div>
+            <div class="color-field">
+              <label class="field-label">Primario claro</label>
+              <div class="color-preview-wrap">
+                <input type="color" class="color-native" id="native-c2" oninput="syncColor('c2',this.value)" />
+                <div class="color-swatch" id="swatch-c2" onclick="document.getElementById('native-c2').click()"></div>
+                <input class="color-hex" id="hex-c2" type="text" maxlength="7" placeholder="#e8c96d" oninput="onHexInput('c2',this.value)" />
+              </div>
+              <div class="field-hint">Hover de botones y efectos</div>
+            </div>
+            <div class="color-field">
+              <label class="field-label">Color de acento</label>
+              <div class="color-preview-wrap">
+                <input type="color" class="color-native" id="native-c3" oninput="syncColor('c3',this.value)" />
+                <div class="color-swatch" id="swatch-c3" onclick="document.getElementById('native-c3').click()"></div>
+                <input class="color-hex" id="hex-c3" type="text" maxlength="7" placeholder="#1a6fcc" oninput="onHexInput('c3',this.value)" />
+              </div>
+              <div class="field-hint">Color secundario de énfasis</div>
+            </div>
+            <div class="color-field">
+              <label class="field-label">Fondo principal</label>
+              <div class="color-preview-wrap">
+                <input type="color" class="color-native" id="native-c4" oninput="syncColor('c4',this.value)" />
+                <div class="color-swatch" id="swatch-c4" onclick="document.getElementById('native-c4').click()"></div>
+                <input class="color-hex" id="hex-c4" type="text" maxlength="7" placeholder="#080808" oninput="onHexInput('c4',this.value)" />
+              </div>
+              <div class="field-hint">Color de fondo de la página</div>
+            </div>
+            <div class="color-field">
+              <label class="field-label">Fondo secundario</label>
+              <div class="color-preview-wrap">
+                <input type="color" class="color-native" id="native-c5" oninput="syncColor('c5',this.value)" />
+                <div class="color-swatch" id="swatch-c5" onclick="document.getElementById('native-c5').click()"></div>
+                <input class="color-hex" id="hex-c5" type="text" maxlength="7" placeholder="#0f0f0f" oninput="onHexInput('c5',this.value)" />
+              </div>
+              <div class="field-hint">Secciones con fondo alterno</div>
+            </div>
+            <div class="color-field">
+              <label class="field-label">Color de texto</label>
+              <div class="color-preview-wrap">
+                <input type="color" class="color-native" id="native-c6" oninput="syncColor('c6',this.value)" />
+                <div class="color-swatch" id="swatch-c6" onclick="document.getElementById('native-c6').click()"></div>
+                <input class="color-hex" id="hex-c6" type="text" maxlength="7" placeholder="#f0ece4" oninput="onHexInput('c6',this.value)" />
+              </div>
+              <div class="field-hint">Texto principal del sitio</div>
+            </div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#333;letter-spacing:1px;padding-top:1rem;border-top:1px solid var(--border);">
+            💡 Los cambios se aplican al guardar. Haz clic en <strong style="color:var(--gold)">Guardar cambios</strong> en la barra superior.
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB: TIPOGRAFÍA ===== -->
+      <div class="dtab-panel" id="dpanel-tipografia" style="display:none;">
+        <div class="section-title">Fuentes del sitio</div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1.5rem;margin-bottom:2rem;">
+
+          <div class="field-row" style="margin-bottom:1.5rem;">
+            <div class="field-group">
+              <label class="field-label">Fuente de títulos / display</label>
+              <select class="field-input" id="font-display" onchange="previewFonts()">
+                <option value="Bebas Neue">Bebas Neue — Industrial</option>
+                <option value="Playfair Display">Playfair Display — Elegante</option>
+                <option value="Syne">Syne — Moderno geométrico</option>
+                <option value="DM Serif Display">DM Serif Display — Editorial</option>
+                <option value="Oswald">Oswald — Condensado</option>
+                <option value="Raleway">Raleway — Ligero premium</option>
+                <option value="Black Han Sans">Black Han Sans — Bold tech</option>
+                <option value="Barlow Condensed">Barlow Condensed — Técnico</option>
+              </select>
+              <div class="field-hint">Para Hero, títulos de sección H1/H2</div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Fuente de cuerpo / textos</label>
+              <select class="field-input" id="font-body" onchange="previewFonts()">
+                <option value="DM Sans">DM Sans — Neutro moderno</option>
+                <option value="Nunito">Nunito — Suave y legible</option>
+                <option value="Outfit">Outfit — Geométrico limpio</option>
+                <option value="Plus Jakarta Sans">Plus Jakarta Sans — Profesional</option>
+                <option value="Mulish">Mulish — Minimalista</option>
+                <option value="Lato">Lato — Clásico corporativo</option>
+                <option value="Poppins">Poppins — Redondo moderno</option>
+                <option value="Manrope">Manrope — Angular contemporáneo</option>
+              </select>
+              <div class="field-hint">Para párrafos, descripciones, nav</div>
+            </div>
+          </div>
+
+          <div class="field-row" style="margin-bottom:1.5rem;">
+            <div class="field-group">
+              <label class="field-label">Fuente mono / código</label>
+              <select class="field-input" id="font-mono" onchange="previewFonts()">
+                <option value="JetBrains Mono">JetBrains Mono — Dev clásico</option>
+                <option value="Fira Code">Fira Code — Con ligaduras</option>
+                <option value="IBM Plex Mono">IBM Plex Mono — Técnico</option>
+                <option value="Space Mono">Space Mono — Retro tech</option>
+                <option value="Courier Prime">Courier Prime — Vintage</option>
+              </select>
+              <div class="field-hint">Para etiquetas, tags, datos técnicos</div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Tamaño base de texto (px)</label>
+              <input class="field-input" id="font-size-base" type="number" min="13" max="20" value="15" oninput="previewFonts()" />
+              <div class="field-hint">Afecta la escala tipográfica global</div>
+            </div>
+          </div>
+
+          <!-- Preview de fuentes -->
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:2px;padding:1.5rem;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:1rem;">— PREVIEW EN VIVO —</div>
+            <div id="font-preview-display" style="font-size:36px;font-weight:700;letter-spacing:2px;margin-bottom:0.5rem;line-height:1.1;">TRANSFORMAMOS IDEAS</div>
+            <div id="font-preview-body" style="font-size:14px;color:rgba(240,236,228,0.6);margin-bottom:0.5rem;line-height:1.7;">Código limpio, sistemas robustos y soluciones que escalan para tu empresa.</div>
+            <div id="font-preview-mono" style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.8);">Desarrollo de software · Ica, Perú</div>
+          </div>
+        </div>
+
+        <div class="section-title">Espaciado y geometría</div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1.5rem;margin-bottom:2rem;">
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Radio de bordes (px)</label>
+              <input class="field-input" id="border-radius" type="number" min="0" max="24" value="2" />
+              <div class="field-hint">0 = esquinas rectas, 12 = redondeado</div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Espaciado de secciones</label>
+              <select class="field-input" id="section-spacing">
+                <option value="compact">Compacto (5rem)</option>
+                <option value="normal" selected>Normal (7rem)</option>
+                <option value="airy">Amplio (10rem)</option>
+              </select>
+              <div class="field-hint">Separación vertical entre secciones</div>
+            </div>
+          </div>
+          <div class="field-row" style="margin-top:1rem;">
+            <div class="field-group">
+              <label class="field-label">Ancho máximo del contenido</label>
+              <select class="field-input" id="max-width">
+                <option value="1100px">Estrecho (1100px)</option>
+                <option value="1280px" selected>Normal (1280px)</option>
+                <option value="1440px">Ancho (1440px)</option>
+                <option value="100%">Full width</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Grosor del header / nav</label>
+              <select class="field-input" id="nav-height">
+                <option value="60px">Delgado (60px)</option>
+                <option value="72px" selected>Normal (72px)</option>
+                <option value="88px">Alto (88px)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB: EFECTOS ===== -->
+      <div class="dtab-panel" id="dpanel-efectos" style="display:none;">
+        <div class="section-title">Efectos visuales del hero</div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1.5rem;margin-bottom:2rem;">
+          <div class="field-group" style="margin-bottom:1.5rem;">
+            <label class="field-label">Efecto de fondo del hero</label>
+            <div class="efecto-grid" id="efectoGrid">
+              <div class="efecto-card active" data-efecto="grid" onclick="selectEfecto('grid')">
+                <div class="efecto-prev" style="background:repeating-linear-gradient(0deg,rgba(201,168,76,0.05) 0,rgba(201,168,76,0.05) 1px,transparent 1px,transparent 40px),repeating-linear-gradient(90deg,rgba(201,168,76,0.05) 0,rgba(201,168,76,0.05) 1px,transparent 1px,transparent 40px),#080808;"></div>
+                <div class="efecto-name">Cuadrícula</div>
+              </div>
+              <div class="efecto-card" data-efecto="radial" onclick="selectEfecto('radial')">
+                <div class="efecto-prev" style="background:radial-gradient(ellipse 60% 60% at 30% 40%,rgba(201,168,76,0.15) 0,transparent 70%),#080808;"></div>
+                <div class="efecto-name">Glow radial</div>
+              </div>
+              <div class="efecto-card" data-efecto="diagonal" onclick="selectEfecto('diagonal')">
+                <div class="efecto-prev" style="background:repeating-linear-gradient(45deg,rgba(201,168,76,0.04) 0,rgba(201,168,76,0.04) 1px,transparent 1px,transparent 30px),#080808;"></div>
+                <div class="efecto-name">Diagonal</div>
+              </div>
+              <div class="efecto-card" data-efecto="dots" onclick="selectEfecto('dots')">
+                <div class="efecto-prev" style="background:radial-gradient(circle,rgba(201,168,76,0.2) 1px,transparent 1px) 0 0/24px 24px,#080808;"></div>
+                <div class="efecto-name">Puntos</div>
+              </div>
+              <div class="efecto-card" data-efecto="gradient" onclick="selectEfecto('gradient')">
+                <div class="efecto-prev" style="background:linear-gradient(135deg,#0a0a12 0,#080808 40%,#0a0d0a 100%);"></div>
+                <div class="efecto-name">Gradiente sutil</div>
+              </div>
+              <div class="efecto-card" data-efecto="noise" onclick="selectEfecto('noise')">
+                <div class="efecto-prev efecto-noise"></div>
+                <div class="efecto-name">Textura ruido</div>
+              </div>
+              <div class="efecto-card" data-efecto="lines-h" onclick="selectEfecto('lines-h')">
+                <div class="efecto-prev" style="background:repeating-linear-gradient(0deg,rgba(201,168,76,0.06) 0,rgba(201,168,76,0.06) 1px,transparent 1px,transparent 20px),#080808;"></div>
+                <div class="efecto-name">Líneas horiz.</div>
+              </div>
+              <div class="efecto-card" data-efecto="none" onclick="selectEfecto('none')">
+                <div class="efecto-prev" style="background:#080808;"></div>
+                <div class="efecto-name">Sin efecto</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Intensidad del efecto (%)</label>
+              <input class="field-input" id="efecto-opacity" type="range" min="10" max="100" value="60" style="padding:8px 0;" oninput="this.nextElementSibling.textContent=this.value+'%'" />
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">60%</span>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Animación del hero</label>
+              <select class="field-input" id="hero-animation">
+                <option value="fade-up">Fade + slide up</option>
+                <option value="fade">Solo fade</option>
+                <option value="slide-left">Desde la izquierda</option>
+                <option value="none">Sin animación</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">Efectos de botones y hover</div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1.5rem;margin-bottom:2rem;">
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Estilo de botón primario</label>
+              <select class="field-input" id="btn-style">
+                <option value="filled">Relleno sólido</option>
+                <option value="outline">Solo borde (outline)</option>
+                <option value="ghost">Fantasma con hover</option>
+                <option value="gradient">Gradiente</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Efecto hover en tarjetas</label>
+              <select class="field-input" id="card-hover">
+                <option value="lift">Elevación + sombra</option>
+                <option value="glow">Brillo de color</option>
+                <option value="border">Borde de color</option>
+                <option value="none">Sin efecto</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row" style="margin-top:1rem;">
+            <div class="field-group">
+              <label class="field-label">Velocidad de transiciones</label>
+              <select class="field-input" id="transition-speed">
+                <option value="fast">Rápido (0.15s)</option>
+                <option value="normal" selected>Normal (0.3s)</option>
+                <option value="slow">Lento (0.5s)</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Sombras</label>
+              <select class="field-input" id="shadow-style">
+                <option value="none">Sin sombras</option>
+                <option value="subtle" selected>Sutiles</option>
+                <option value="color">Con color primario</option>
+                <option value="heavy">Pronunciadas</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">Marquee / banda de tecnologías</div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1.5rem;margin-bottom:2rem;">
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Velocidad del marquee</label>
+              <select class="field-input" id="marquee-speed">
+                <option value="slow">Lento (40s)</option>
+                <option value="normal" selected>Normal (25s)</option>
+                <option value="fast">Rápido (12s)</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Separador entre elementos</label>
+              <select class="field-input" id="marquee-sep">
+                <option value="dot">· Punto</option>
+                <option value="slash">/ Barra</option>
+                <option value="diamond">◆ Diamante</option>
+                <option value="dash">— Guión</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB: LOGO ===== -->
+      <div class="dtab-panel" id="dpanel-logo" style="display:none;">
+        <div class="section-title">Logo del sitio</div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1.5rem;margin-bottom:2rem;">
+          <div class="logo-tipo-tabs" style="margin-bottom:1.25rem;">
+            <button class="logo-tab active" id="tab-logo-texto" onclick="setLogoTipo('texto')">Texto (por defecto)</button>
+            <button class="logo-tab" id="tab-logo-imagen" onclick="setLogoTipo('imagen')">Imagen / PNG</button>
+          </div>
+
+          <!-- Modo texto -->
+          <div id="logo-modo-texto">
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:2px;padding:1.25rem;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.8;">
+              El logo se muestra como texto con el nombre de la empresa configurado en <strong style="color:var(--gold)">Empresa → Nombre</strong>. El color primario se aplica al número <strong style="color:var(--gold)">7</strong> automáticamente.
+            </div>
+          </div>
+
+          <!-- Modo imagen -->
+          <div id="logo-modo-imagen" style="display:none;">
+            <div class="field-group" style="margin-bottom:1rem;">
+              <label class="field-label">URL de imagen (si tienes hosting)</label>
+              <input class="field-input" id="d-logo-url" type="text" placeholder="https://tusitio.com/assets/img/logo.png" oninput="onLogoUrlChange()" />
+              <div class="field-hint">PNG o SVG con fondo transparente · Recomendado: 300×80px</div>
+            </div>
+            <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:1rem;">— O SUBE UN ARCHIVO —</div>
+            <div class="logo-upload-zone" id="logoUploadZone" onclick="document.getElementById('logoFileInput').click()">
+              <img class="logo-preview-img" id="logoPreviewImg" src="" alt="logo preview" />
+              <div class="logo-upload-label" id="logoUploadLabel">Haz clic o arrastra tu logo aquí</div>
+              <div class="logo-upload-sub" id="logoUploadSub">PNG · SVG · JPG — máx. 2MB</div>
+              <input type="file" id="logoFileInput" accept="image/png,image/svg+xml,image/jpeg,image/webp" style="display:none" onchange="onLogoFileChange(event)" />
+            </div>
+            <div class="field-group" style="margin-top:1rem;">
+              <label class="field-label">Ancho del logo en navegación (px)</label>
+              <input class="field-input" id="d-logo-ancho" type="number" min="60" max="300" value="140" style="width:150px;" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /panel-diseno -->
+
+    <!-- SEGURIDAD -->
+    <div class="panel" id="panel-seguridad">
+
+      <!-- GITHUB CONFIG -->
+      <div class="section-title">Guardar en GitHub <span id="gh-status-badge" style="font-size:11px;margin-left:8px;padding:2px 8px;border-radius:20px;background:var(--bg3);color:var(--muted);">no configurado</span></div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1.5rem;margin-bottom:1.5rem;">
+        <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:1.5rem;">
+          Configura tu repositorio de GitHub para que <strong style="color:var(--white)">Guardar cambios</strong> actualice el sitio directamente, sin descargar ningun archivo.
+        </div>
+        <div class="field-group">
+          <label class="field-label">Personal Access Token (PAT)</label>
+          <input class="field-input" id="gh-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Crealo en GitHub &rarr; Settings &rarr; Developer Settings &rarr; Personal Access Tokens &rarr; scope <em>repo</em>.</div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Repositorio (usuario/nombre)</label>
+          <input class="field-input" id="gh-repo" type="text" placeholder="tuusuario/tu-repositorio" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Rama (branch)</label>
+          <input class="field-input" id="gh-branch" type="text" placeholder="main" value="main" style="width:160px;" />
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:center;margin-top:0.5rem;flex-wrap:wrap;">
+          <button class="btn-save" onclick="guardarGHConfig()">Guardar configuracion</button>
+          <button onclick="probarGHConfig()" style="background:transparent;border:1px solid var(--gold);color:var(--gold);padding:0.5rem 1rem;border-radius:3px;cursor:pointer;font-size:13px;">Probar conexion</button>
+          <button onclick="borrarGHConfig()" style="background:transparent;border:1px solid var(--muted);color:var(--muted);padding:0.5rem 1rem;border-radius:3px;cursor:pointer;font-size:13px;">Limpiar</button>
+        </div>
+      </div>
+
+      <div class="section-title">Seguridad del panel</div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1.5rem;margin-bottom:1.5rem;">
+        <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:1.5rem;">
+          Las credenciales se guardan en el localStorage del navegador. Para mayor seguridad en producción, implementa autenticación en el servidor.
+        </div>
+        <div class="field-group">
+          <label class="field-label">Nuevo usuario</label>
+          <input class="field-input" id="s-user" type="text" placeholder="admin" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Nueva contraseña</label>
+          <input class="field-input" id="s-pass" type="password" placeholder="mínimo 6 caracteres" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Confirmar contraseña</label>
+          <input class="field-input" id="s-pass2" type="password" placeholder="repite la contraseña" />
+        </div>
+        <button class="btn-save" onclick="cambiarCredenciales()" style="margin-top:0.5rem;">Actualizar credenciales</button>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1.5rem;">
+        <div class="section-title">Guía de publicación</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:2.2;">
+          <div style="color:var(--gold);margin-bottom:8px;">Con GitHub Pages (recomendado):</div>
+          <div>1. Configura tu token PAT en la seccion de arriba</div>
+          <div>2. Edita el contenido y haz clic en <strong style="color:var(--gold)">Guardar cambios</strong></div>
+          <div>3. ✓ El archivo se actualiza en tu repo automaticamente</div>
+          <div style="margin-top:1rem;color:var(--gold);">Con hosting PHP (cPanel, Hostinger):</div>
+          <div>1. Edita el contenido desde este panel</div>
+          <div>2. Haz clic en <strong style="color:var(--gold)">Guardar cambios</strong></div>
+          <div>3. ✓ El sitio se actualiza automaticamente al instante</div>
+          <div style="margin-top:1rem;color:#444;">⚠ Para cambiar la contrasena de la API PHP, edita ADMIN_SECRET en admin/guardar.php</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+// ============================================================
+// AUTH
+// ============================================================
+const DEFAULT_USER = 'admin';
+const DEFAULT_PASS = 'iz0p6mr7vT0E';
+
+function getCredenciales() {
+  return {
+    user: localStorage.getItem('sc7_user') || DEFAULT_USER,
+    pass: localStorage.getItem('sc7_pass') || DEFAULT_PASS
+  };
+}
+
+function doLogin() {
+  const u = document.getElementById('luser').value.trim();
+  const p = document.getElementById('lpass').value;
+  const creds = getCredenciales();
+  if (u === creds.user && p === creds.pass) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('sidebarUser').textContent = u;
+    cargarDatos();
+    ghLoadInputs();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+  }
+}
+
+function doLogout() {
+  location.reload();
+}
+
+function cambiarCredenciales() {
+  const u = document.getElementById('s-user').value.trim();
+  const p = document.getElementById('s-pass').value;
+  const p2 = document.getElementById('s-pass2').value;
+  if (!u || !p) return toast('Completa todos los campos.', true);
+  if (p !== p2) return toast('Las contraseñas no coinciden.', true);
+  if (p.length < 6) return toast('Mínimo 6 caracteres.', true);
+  localStorage.setItem('sc7_user', u);
+  localStorage.setItem('sc7_pass', p);
+  toast('✓ Credenciales actualizadas.');
+}
+
+// ============================================================
+// DATA
+// ============================================================
+let DATA = {};
+let state = DATA; // alias used by design panel
+
+async function cargarDatos() {
+  try {
+    const res = await fetch('../data/contenido.json?' + Date.now());
+    DATA = await res.json();
+  } catch(e) {
+    DATA = {
+      empresa: { nombre:'SYS CODI7', slogan:'Código · Sistemas · Soluciones', descripcion:'', historia:'', historia2:'', anios:'5+', hero_tag:'', hero_titulo_1:'Transfor', hero_titulo_2:'mamos', hero_titulo_3:'ideas' },
+      contacto: { correo:'', whatsapp:'', whatsapp_url:'', ubicacion:'' },
+      metricas: [{ num:'50+', label:'Proyectos' }, { num:'30+', label:'Clientes' }, { num:'5+', label:'Años' }],
+      servicios: [], portafolio: [], valores: [], servicios_form: [], marquee: [],
+      diseno: { logo_tipo:'texto', logo_url:'', logo_ancho:140, color_primario:'#c9a84c', color_primario_light:'#e8c96d', color_acento:'#1a6fcc', color_bg:'#080808', color_bg2:'#0f0f0f', color_texto:'#f0ece4' }
+    };
+  }
+  if (!DATA.diseno) DATA.diseno = { logo_tipo:'texto', logo_url:'', logo_ancho:140, color_primario:'#c9a84c', color_primario_light:'#e8c96d', color_acento:'#1a6fcc', color_bg:'#080808', color_bg2:'#0f0f0f', color_texto:'#f0ece4' };
+  state = DATA;
+  rellenarFormularios();
+  actualizarDashboard();
+}
+
+function rellenarFormularios() {
+  const e = DATA.empresa;
+  ['nombre','slogan','descripcion','hero_tag','hero_titulo_1','hero_titulo_2','hero_titulo_3','historia','historia2','anios'].forEach(k => {
+    const el = document.getElementById('e-'+k);
+    if (el) el.value = e[k] || '';
+  });
+  const c = DATA.contacto;
+  ['correo','whatsapp','whatsapp_url','ubicacion'].forEach(k => {
+    const el = document.getElementById('c-'+k);
+    if (el) el.value = c[k] || '';
+  });
+  document.getElementById('sf-lista').value = (DATA.servicios_form || []).join('\n');
+  document.getElementById('mq-lista').value = (DATA.marquee || []).join('\n');
+  renderServicios();
+  renderPortafolio();
+  renderValores();
+  renderMetricas();
+}
+
+function leerFormularios() {
+  const e = DATA.empresa;
+  ['nombre','slogan','descripcion','hero_tag','hero_titulo_1','hero_titulo_2','hero_titulo_3','historia','historia2','anios'].forEach(k => {
+    const el = document.getElementById('e-'+k);
+    if (el) e[k] = el.value;
+  });
+  const c = DATA.contacto;
+  ['correo','whatsapp','whatsapp_url','ubicacion'].forEach(k => {
+    const el = document.getElementById('c-'+k);
+    if (el) c[k] = el.value;
+  });
+  DATA.servicios_form = document.getElementById('sf-lista').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  DATA.marquee = document.getElementById('mq-lista').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  // Diseño (solo si el panel fue inicializado)
+  if (document.getElementById('hex-c1').value) {
+    DATA.diseno = collectDisenoData();
+  }
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function actualizarDashboard() {
+  const stats = [
+    { num: DATA.servicios.filter(s=>s.activo).length, label: 'Servicios activos', note: DATA.servicios.length + ' en total' },
+    { num: DATA.portafolio.filter(p=>p.activo).length, label: 'Proyectos visibles', note: DATA.portafolio.length + ' en total' },
+    { num: DATA.valores.length, label: 'Valores', note: 'en sección Nosotros' },
+    { num: DATA.metricas.length, label: 'Métricas', note: 'en el hero' },
+  ];
+  document.getElementById('statGrid').innerHTML = stats.map(s =>
+    `<div class="stat-card"><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div><div class="stat-note">${s.note}</div></div>`
+  ).join('');
+}
+
+// ============================================================
+// SERVICIOS
+// ============================================================
+function renderServicios() {
+  document.getElementById('servicesList').innerHTML = DATA.servicios.map((s, i) => `
+    <div class="card-item">
+      <div class="card-num">${s.num}</div>
+      <div class="card-icon">${s.icono}</div>
+      <div class="card-info">
+        <div class="card-title-text">${s.titulo}</div>
+        <div class="card-sub">${s.descripcion.substring(0,60)}...</div>
+      </div>
+      <div class="card-actions">
+        <label class="toggle"><input type="checkbox" ${s.activo?'checked':''} onchange="toggleActivo('servicios',${i},this.checked)"><div class="toggle-slider"></div></label>
+        <button class="btn-edit" onclick="editServicio(${i})">Editar</button>
+        <button class="btn-del" onclick="eliminar('servicios',${i})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function addServicio() {
+  DATA.servicios.push({ id: Date.now(), num: String(DATA.servicios.length+1).padStart(2,'0'), icono:'🔧', titulo:'Nuevo servicio', descripcion:'Descripción del servicio.', activo: true });
+  renderServicios();
+  editServicio(DATA.servicios.length - 1);
+}
+
+function editServicio(i) {
+  const s = DATA.servicios[i];
+  openModal('Editar servicio', `
+    <div class="field-row">
+      <div class="field-group"><label class="field-label">Número</label><input class="field-input" id="ms-num" value="${s.num}" /></div>
+      <div class="field-group"><label class="field-label">Icono (emoji)</label><input class="field-input" id="ms-icono" value="${s.icono}" /></div>
+    </div>
+    <div class="field-group"><label class="field-label">Título</label><input class="field-input" id="ms-titulo" value="${s.titulo}" /></div>
+    <div class="field-group"><label class="field-label">Descripción</label><textarea class="field-textarea" id="ms-descripcion">${s.descripcion}</textarea></div>
+  `, () => {
+    DATA.servicios[i].num = document.getElementById('ms-num').value;
+    DATA.servicios[i].icono = document.getElementById('ms-icono').value;
+    DATA.servicios[i].titulo = document.getElementById('ms-titulo').value;
+    DATA.servicios[i].descripcion = document.getElementById('ms-descripcion').value;
+    renderServicios();
+  });
+}
+
+// ============================================================
+// PORTAFOLIO
+// ============================================================
+function renderPortafolio() {
+  document.getElementById('portfolioList').innerHTML = DATA.portafolio.map((p, i) => `
+    <div class="card-item">
+      <div class="card-info">
+        <div class="card-title-text">${p.titulo}</div>
+        <div class="card-sub">${p.tag} — ${p.tecnologias}</div>
+      </div>
+      <div class="card-actions">
+        ${p.destacado ? '<span style="font-family:JetBrains Mono;font-size:9px;letter-spacing:1px;color:var(--gold);text-transform:uppercase;padding:4px 8px;border:1px solid rgba(201,168,76,0.3);border-radius:2px;">⭐ Destacado</span>' : ''}
+        <label class="toggle"><input type="checkbox" ${p.activo?'checked':''} onchange="toggleActivo('portafolio',${i},this.checked)"><div class="toggle-slider"></div></label>
+        <button class="btn-edit" onclick="editProyecto(${i})">Editar</button>
+        <button class="btn-del" onclick="eliminar('portafolio',${i})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function addProyecto() {
+  DATA.portafolio.push({ id: Date.now(), tag:'Categoría · Tipo', titulo:'Nuevo proyecto', tecnologias:'Tech · Stack', imagen:'', destacado: false, activo: true });
+  renderPortafolio();
+  editProyecto(DATA.portafolio.length - 1);
+}
+
+function editProyecto(i) {
+  const p = DATA.portafolio[i];
+  openModal('Editar proyecto', `
+    <div class="field-group"><label class="field-label">Título</label><input class="field-input" id="mp-titulo" value="${p.titulo}" /></div>
+    <div class="field-group"><label class="field-label">Tag / Categoría</label><input class="field-input" id="mp-tag" value="${p.tag}" /></div>
+    <div class="field-group"><label class="field-label">Tecnologías</label><input class="field-input" id="mp-tech" value="${p.tecnologias}" /></div>
+    <div class="field-group">
+      <label class="field-label">URL de imagen</label>
+      <input class="field-input" id="mp-img" value="${p.imagen}" oninput="prevImg()" />
+      <img class="img-preview" id="mp-preview" src="${p.imagen}" onerror="this.src=''" />
+    </div>
+    <div class="field-group" style="display:flex;flex-direction:row;align-items:center;gap:1rem;margin-top:0.5rem;">
+      <label class="toggle"><input type="checkbox" id="mp-dest" ${p.destacado?'checked':''}><div class="toggle-slider"></div></label>
+      <span style="font-size:13px">Proyecto destacado (ocupa doble espacio)</span>
+    </div>
+  `, () => {
+    DATA.portafolio[i].titulo = document.getElementById('mp-titulo').value;
+    DATA.portafolio[i].tag = document.getElementById('mp-tag').value;
+    DATA.portafolio[i].tecnologias = document.getElementById('mp-tech').value;
+    DATA.portafolio[i].imagen = document.getElementById('mp-img').value;
+    DATA.portafolio[i].destacado = document.getElementById('mp-dest').checked;
+    renderPortafolio();
+  });
+}
+
+function prevImg() {
+  const url = document.getElementById('mp-img').value;
+  const prev = document.getElementById('mp-preview');
+  if (prev) prev.src = url;
+}
+
+// ============================================================
+// VALORES
+// ============================================================
+function renderValores() {
+  document.getElementById('valoresList').innerHTML = DATA.valores.map((v, i) => `
+    <div class="card-item">
+      <div class="card-info">
+        <div class="card-title-text">${v.label}</div>
+        <div class="card-sub">${v.texto.substring(0,70)}</div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-edit" onclick="editValor(${i})">Editar</button>
+        <button class="btn-del" onclick="eliminar('valores',${i})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function addValor() {
+  DATA.valores.push({ label: 'Nuevo valor', texto: 'Descripción del valor.' });
+  renderValores();
+  editValor(DATA.valores.length - 1);
+}
+
+function editValor(i) {
+  const v = DATA.valores[i];
+  openModal('Editar valor', `
+    <div class="field-group"><label class="field-label">Etiqueta</label><input class="field-input" id="mv-label" value="${v.label}" /></div>
+    <div class="field-group"><label class="field-label">Descripción</label><textarea class="field-textarea" id="mv-texto">${v.texto}</textarea></div>
+  `, () => {
+    DATA.valores[i].label = document.getElementById('mv-label').value;
+    DATA.valores[i].texto = document.getElementById('mv-texto').value;
+    renderValores();
+  });
+}
+
+// ============================================================
+// MÉTRICAS
+// ============================================================
+function renderMetricas() {
+  document.getElementById('metricasList').innerHTML = DATA.metricas.map((m, i) => `
+    <div class="card-item">
+      <div class="card-info">
+        <div class="card-title-text" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);">${m.num}</div>
+        <div class="card-sub">${m.label}</div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-edit" onclick="editMetrica(${i})">Editar</button>
+        <button class="btn-del" onclick="eliminar('metricas',${i})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function addMetrica() {
+  DATA.metricas.push({ num: '0+', label: 'Nueva métrica' });
+  renderMetricas();
+  editMetrica(DATA.metricas.length - 1);
+}
+
+function editMetrica(i) {
+  const m = DATA.metricas[i];
+  openModal('Editar métrica', `
+    <div class="field-row">
+      <div class="field-group"><label class="field-label">Número / Valor</label><input class="field-input" id="mm-num" value="${m.num}" /></div>
+      <div class="field-group"><label class="field-label">Etiqueta</label><input class="field-input" id="mm-label" value="${m.label}" /></div>
+    </div>
+  `, () => {
+    DATA.metricas[i].num = document.getElementById('mm-num').value;
+    DATA.metricas[i].label = document.getElementById('mm-label').value;
+    renderMetricas();
+  });
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function toggleActivo(section, i, val) {
+  DATA[section][i].activo = val;
+}
+
+function eliminar(section, i) {
+  if (!confirm('¿Eliminar este elemento?')) return;
+  DATA[section].splice(i, 1);
+  if (section === 'servicios') renderServicios();
+  if (section === 'portafolio') renderPortafolio();
+  if (section === 'valores') renderValores();
+  if (section === 'metricas') renderMetricas();
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+let _modalCallback = null;
+function openModal(title, body, callback) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = body;
+  document.getElementById('modalOverlay').classList.add('open');
+  _modalCallback = callback;
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  _modalCallback = null;
+}
+function saveModal() {
+  if (_modalCallback) _modalCallback();
+  closeModal();
+  toast('✓ Cambio guardado en memoria.');
+}
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+});
+
+// ============================================================
+// GUARDAR (descarga JSON)
+// ============================================================
+// Token secreto — debe coincidir con ADMIN_SECRET en admin/guardar.php
+const ADMIN_SECRET = 'SYSCODI7_BjdGmIXL0tKQMBzu';
+
+// ─── GITHUB CONFIG ───────────────────────────────────────────
+function getGHConfig() {
+  return {
+    token: localStorage.getItem('gh_token') || '',
+    repo:  localStorage.getItem('gh_repo')  || '',   // ej: usuario/repositorio
+    branch:localStorage.getItem('gh_branch')|| 'main',
+    path:  'data/contenido.json'
+  };
+}
+function setGHConfig(token, repo, branch) {
+  localStorage.setItem('gh_token',  token.trim());
+  localStorage.setItem('gh_repo',   repo.trim());
+  localStorage.setItem('gh_branch', branch.trim() || 'main');
+}
+function ghConfigured() {
+  const c = getGHConfig();
+  return c.token && c.repo;
+}
+
+async function guardarEnGitHub(json) {
+  const { token, repo, branch, path } = getGHConfig();
+  const apiBase = `https://api.github.com/repos/${repo}/contents/${path}`;
+
+  // Obtener SHA actual del archivo (necesario para actualizarlo)
+  let sha = null;
+  try {
+    const getRes = await fetch(`${apiBase}?ref=${branch}&t=${Date.now()}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github+json',
+        'Cache-Control': 'no-cache'
+      }
+    });
+    if (getRes.ok) {
+      const fileData = await getRes.json();
+      sha = fileData.sha;
+    }
+  } catch(e) { /* archivo nuevo, sin SHA */ }
+
+  const body = {
+    message: `[admin] Actualizar contenido.json`,
+    content: btoa(unescape(encodeURIComponent(json))),
+    branch:  branch
+  };
+  if (sha) body.sha = sha;
+
+  const putRes = await fetch(apiBase, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!putRes.ok) {
+    const err = await putRes.json();
+    throw new Error(err.message || `Error ${putRes.status}`);
+  }
+  return await putRes.json();
+}
+
+async function guardarTodo() {
+  leerFormularios();
+  actualizarDashboard();
+
+  const json = JSON.stringify(DATA, null, 2);
+
+  // 1. Si hay configuración de GitHub → guardar directo en el repo
+  if (ghConfigured()) {
+    try {
+      await guardarEnGitHub(json);
+      toast('✓ Guardado en GitHub. El sitio se actualiza en segundos.');
+      return;
+    } catch(e) {
+      toast('✗ Error GitHub: ' + e.message, true);
+      console.error(e);
+      return;
+    }
+  }
+
+  // 2. Intentar guardar en el servidor vía PHP (hosting con PHP)
+  try {
+    const res = await fetch('guardar.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Auth-Token': ADMIN_SECRET
+      },
+      body: json
+    });
+    const result = await res.json();
+    if (result.ok) {
+      toast('✓ Guardado en el servidor. El sitio ya está actualizado.');
+      return;
+    } else {
+      throw new Error(result.msg);
+    }
+  } catch(e) {
+    // 3. Fallback: descargar archivo (último recurso)
+    console.warn('Ni GitHub ni PHP disponibles, descargando:', e.message);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'contenido.json'; a.click();
+    URL.revokeObjectURL(url);
+    toast('⬇ Archivo descargado. Configura GitHub en Seguridad para evitar esto.');
+  }
+}
+
+// ============================================================
+// GITHUB CONFIG UI
+// ============================================================
+function ghBadgeUpdate() {
+  const badge = document.getElementById('gh-status-badge');
+  if (!badge) return;
+  if (ghConfigured()) {
+    const { repo, branch } = getGHConfig();
+    badge.textContent = repo + ' (' + branch + ')';
+    badge.style.background = 'rgba(34,197,94,0.15)';
+    badge.style.color = '#22c55e';
+  } else {
+    badge.textContent = 'no configurado';
+    badge.style.background = 'var(--bg3)';
+    badge.style.color = 'var(--muted)';
+  }
+}
+
+function guardarGHConfig() {
+  const token  = document.getElementById('gh-token').value.trim();
+  const repo   = document.getElementById('gh-repo').value.trim();
+  const branch = document.getElementById('gh-branch').value.trim() || 'main';
+  if (!token || !repo) { toast('Completa el token y el repositorio', true); return; }
+  if (!repo.includes('/')) { toast('El repositorio debe ser usuario/nombre', true); return; }
+  setGHConfig(token, repo, branch);
+  ghBadgeUpdate();
+  toast('✓ Configuracion de GitHub guardada');
+}
+
+function borrarGHConfig() {
+  localStorage.removeItem('gh_token');
+  localStorage.removeItem('gh_repo');
+  localStorage.removeItem('gh_branch');
+  document.getElementById('gh-token').value = '';
+  document.getElementById('gh-repo').value = '';
+  document.getElementById('gh-branch').value = 'main';
+  ghBadgeUpdate();
+  toast('Configuracion de GitHub eliminada');
+}
+
+async function probarGHConfig() {
+  const token  = document.getElementById('gh-token').value.trim();
+  const repo   = document.getElementById('gh-repo').value.trim();
+  const branch = document.getElementById('gh-branch').value.trim() || 'main';
+  if (!token || !repo) { toast('Completa el token y el repositorio primero', true); return; }
+  try {
+    const res = await fetch(`https://api.github.com/repos/${repo}/contents/data/contenido.json?ref=${branch}`, {
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' }
+    });
+    if (res.status === 200) {
+      toast('✓ Conexion exitosa. Archivo encontrado en el repo.');
+    } else if (res.status === 404) {
+      toast('⚠ Conexion OK, pero data/contenido.json no existe aun (se creara al guardar).');
+    } else if (res.status === 401) {
+      toast('✗ Token invalido o sin permisos', true);
+    } else {
+      toast('✗ Error ' + res.status, true);
+    }
+  } catch(e) {
+    toast('✗ No se pudo conectar: ' + e.message, true);
+  }
+}
+
+function ghLoadInputs() {
+  const c = getGHConfig();
+  const t = document.getElementById('gh-token');
+  const r = document.getElementById('gh-repo');
+  const b = document.getElementById('gh-branch');
+  if (t && c.token)  t.value = c.token;
+  if (r && c.repo)   r.value = c.repo;
+  if (b && c.branch) b.value = c.branch;
+  ghBadgeUpdate();
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer;
+function toast(msg, err=false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (err ? ' error' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.className = 'toast', 3500);
+}
+
+// ============================================================
+// PANELS
+// ============================================================
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.textContent.trim().toLowerCase().includes(name.substring(0,4).toLowerCase())) n.classList.add('active');
+  });
+  const titles = { dashboard:'Dashboard', empresa:'Empresa', servicios:'Servicios', portafolio:'Portafolio', valores:'Valores', contacto:'Contacto', metricas:'Métricas', seguridad:'Seguridad', diseno:'Diseño' };
+  document.getElementById('topbarTitle').textContent = titles[name] || name;
+  if (name === 'diseno') initDisenoPanel();
+}
+
+// ============================================================
+// DISEÑO — colores y logo
+// ============================================================
+const COLOR_DEFAULTS = {
+  c1: '#c9a84c', c2: '#e8c96d', c3: '#1a6fcc',
+  c4: '#080808', c5: '#0f0f0f', c6: '#f0ece4'
+};
+const COLOR_KEYS = ['c1','c2','c3','c4','c5','c6'];
+
+function initDisenoPanel() {
+  const d = state.diseno || {};
+  const vals = {
+    c1: d.color_primario     || COLOR_DEFAULTS.c1,
+    c2: d.color_primario_light || COLOR_DEFAULTS.c2,
+    c3: d.color_acento       || COLOR_DEFAULTS.c3,
+    c4: d.color_bg           || COLOR_DEFAULTS.c4,
+    c5: d.color_bg2          || COLOR_DEFAULTS.c5,
+    c6: d.color_texto        || COLOR_DEFAULTS.c6,
+  };
+  COLOR_KEYS.forEach(k => {
+    document.getElementById('hex-' + k).value = vals[k];
+    document.getElementById('native-' + k).value = vals[k];
+    document.getElementById('swatch-' + k).style.background = vals[k];
+  });
+  updatePreview(vals);
+
+  // Logo
+  const tipo = d.logo_tipo || 'texto';
+  setLogoTipo(tipo, true);
+  if (d.logo_url) document.getElementById('d-logo-url').value = d.logo_url;
+  if (d.logo_ancho) document.getElementById('d-logo-ancho').value = d.logo_ancho;
+  if (d.logo_url) showLogoPreview(d.logo_url);
+}
+
+function syncColor(key, val) {
+  document.getElementById('hex-' + key).value = val;
+  document.getElementById('swatch-' + key).style.background = val;
+  updatePreview(getCurrentColors());
+}
+
+function onHexInput(key, val) {
+  if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+    document.getElementById('native-' + key).value = val;
+    document.getElementById('swatch-' + key).style.background = val;
+    updatePreview(getCurrentColors());
+  }
+}
+
+function getCurrentColors() {
+  const v = {};
+  COLOR_KEYS.forEach(k => v[k] = document.getElementById('hex-' + k).value || COLOR_DEFAULTS[k]);
+  return v;
+}
+
+function updatePreview(v) {
+  // dots
+  const dots = ['c1','c2','c3','c4','c6'];
+  dots.forEach((k,i) => {
+    const el = document.getElementById('prev-dot' + (i+1));
+    if (el) el.style.background = v[k];
+  });
+  // hex box
+  const hb = document.getElementById('prev-hex-box');
+  if (hb) { hb.style.borderColor = v.c1; hb.style.color = v.c1; }
+  // brand color
+  const brand = document.getElementById('prev-brand');
+  if (brand) brand.querySelector('em').style.color = v.c1;
+}
+
+function resetColores() {
+  COLOR_KEYS.forEach(k => {
+    document.getElementById('hex-' + k).value = COLOR_DEFAULTS[k];
+    document.getElementById('native-' + k).value = COLOR_DEFAULTS[k];
+    document.getElementById('swatch-' + k).style.background = COLOR_DEFAULTS[k];
+  });
+  updatePreview(COLOR_DEFAULTS);
+}
+
+function setLogoTipo(tipo, silent) {
+  document.getElementById('logo-modo-texto').style.display = tipo === 'texto' ? 'block' : 'none';
+  document.getElementById('logo-modo-imagen').style.display = tipo === 'imagen' ? 'block' : 'none';
+  document.getElementById('tab-logo-texto').classList.toggle('active', tipo === 'texto');
+  document.getElementById('tab-logo-imagen').classList.toggle('active', tipo === 'imagen');
+  // preview nav
+  document.getElementById('prev-hex-box').style.display = tipo === 'texto' ? 'flex' : 'none';
+  document.getElementById('prev-logo-img-wrap').style.display = tipo === 'imagen' ? 'block' : 'none';
+}
+
+function onLogoUrlChange() {
+  const url = document.getElementById('d-logo-url').value.trim();
+  if (url) showLogoPreview(url);
+}
+
+function showLogoPreview(url) {
+  const img = document.getElementById('logoPreviewImg');
+  const prevImg = document.getElementById('prev-logo-img');
+  img.src = url; img.style.display = 'block';
+  prevImg.src = url;
+  document.getElementById('prev-logo-img-wrap').style.display = 'block';
+  document.getElementById('logoUploadZone').classList.add('has-logo');
+  document.getElementById('logoUploadLabel').textContent = 'Haz clic para cambiar el logo';
+  document.getElementById('logoUploadSub').textContent = url.length > 50 ? url.substring(0,50) + '…' : url;
+}
+
+function onLogoFileChange(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { toast('El archivo supera los 2MB', true); return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const dataUrl = ev.target.result;
+    document.getElementById('d-logo-url').value = dataUrl;
+    showLogoPreview(dataUrl);
+  };
+  reader.readAsDataURL(file);
+}
+
+// Colectar datos de diseño al guardar
+function collectDisenoData() {
+  const v = getCurrentColors();
+  const tipo = document.getElementById('tab-logo-imagen').classList.contains('active') ? 'imagen' : 'texto';
+  const logoUrl = (document.getElementById('d-logo-url').value || '').trim();
+  const ancho = parseInt(document.getElementById('d-logo-ancho').value) || 140;
+  return {
+    logo_tipo: tipo,
+    logo_url: tipo === 'imagen' ? logoUrl : '',
+    logo_ancho: ancho,
+    color_primario: v.c1,
+    color_primario_light: v.c2,
+    color_acento: v.c3,
+    color_bg: v.c4,
+    color_bg2: v.c5,
+    color_texto: v.c6,
+  };
+}
+
+// ============================================================
+// DISEÑO — TABS
+// ============================================================
+function showDTab(tab) {
+  document.querySelectorAll('.dtab-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.dtab').forEach(b => b.classList.remove('active'));
+  document.getElementById('dpanel-' + tab).style.display = 'block';
+  document.getElementById('dtab-' + tab).classList.add('active');
+}
+
+// ============================================================
+// TEMAS PREDEFINIDOS
+// ============================================================
+const TEMAS = [
+  {
+    id: 'dark-gold',
+    nombre: 'Dark Gold',
+    desc: 'Oscuro con dorado — el actual',
+    c1: '#c9a84c', c2: '#e8c96d', c3: '#1a6fcc',
+    c4: '#080808', c5: '#0f0f0f', c6: '#f0ece4',
+    font_display: 'Bebas Neue', font_body: 'DM Sans', font_mono: 'JetBrains Mono',
+    efecto: 'grid', btn_style: 'filled', border_radius: 2
+  },
+  {
+    id: 'cyber-neon',
+    nombre: 'Cyber Neon',
+    desc: 'Azul eléctrico sobre negro',
+    c1: '#00d4ff', c2: '#7ef9ff', c3: '#ff2d78',
+    c4: '#06060f', c5: '#0a0a18', c6: '#e8f4ff',
+    font_display: 'Barlow Condensed', font_body: 'Outfit', font_mono: 'Fira Code',
+    efecto: 'dots', btn_style: 'outline', border_radius: 0
+  },
+  {
+    id: 'minimal-white',
+    nombre: 'Minimal Blanco',
+    desc: 'Limpio, profesional, luminoso',
+    c1: '#0f0f0f', c2: '#333333', c3: '#0066cc',
+    c4: '#fafaf8', c5: '#f2f2f0', c6: '#1a1a1a',
+    font_display: 'Playfair Display', font_body: 'Mulish', font_mono: 'IBM Plex Mono',
+    efecto: 'none', btn_style: 'filled', border_radius: 4
+  },
+  {
+    id: 'forest-green',
+    nombre: 'Forest Green',
+    desc: 'Verde esmeralda y naturaleza',
+    c1: '#2ecc71', c2: '#58d68d', c3: '#f39c12',
+    c4: '#070d0a', c5: '#0d1a12', c6: '#e8f8e0',
+    font_display: 'Oswald', font_body: 'Nunito', font_mono: 'Space Mono',
+    efecto: 'radial', btn_style: 'filled', border_radius: 6
+  },
+  {
+    id: 'sunset-red',
+    nombre: 'Sunset Rojo',
+    desc: 'Rojo intenso y energético',
+    c1: '#e63946', c2: '#ff6b78', c3: '#ffd166',
+    c4: '#0d0608', c5: '#160a0a', c6: '#fff0f0',
+    font_display: 'Syne', font_body: 'Manrope', font_mono: 'JetBrains Mono',
+    efecto: 'diagonal', btn_style: 'gradient', border_radius: 2
+  },
+  {
+    id: 'violet-dark',
+    nombre: 'Violet Dark',
+    desc: 'Violeta profundo y creativo',
+    c1: '#a855f7', c2: '#c084fc', c3: '#f472b6',
+    c4: '#07050f', c5: '#0d0918', c6: '#f5f0ff',
+    font_display: 'Raleway', font_body: 'Plus Jakarta Sans', font_mono: 'Courier Prime',
+    efecto: 'gradient', btn_style: 'ghost', border_radius: 8
+  },
+];
+
+let temaActivo = 'dark-gold';
+
+function renderTemas() {
+  const grid = document.getElementById('temasGrid');
+  if (!grid) return;
+  grid.innerHTML = TEMAS.map(t => `
+    <div class="tema-card ${t.id === temaActivo ? 'active' : ''}" onclick="aplicarTema('${t.id}')">
+      <div class="tema-preview" style="background:${t.c4};">
+        <div class="tema-preview-nav" style="background:${t.c5};">
+          <div class="tema-preview-dot" style="background:${t.c1};"></div>
+          <div class="tema-preview-dot" style="background:${t.c6};opacity:0.4;"></div>
+          <div class="tema-preview-dot" style="background:${t.c6};opacity:0.2;"></div>
+        </div>
+        <div class="tema-preview-hero">
+          <div class="tema-preview-label" style="background:${t.c1};opacity:0.7;width:50%;"></div>
+          <div class="tema-preview-title" style="background:${t.c6};opacity:0.9;"></div>
+          <div class="tema-preview-sub" style="background:${t.c6};opacity:0.3;"></div>
+        </div>
+      </div>
+      <div class="tema-info">
+        <div class="tema-nombre">${t.nombre}</div>
+        <div class="tema-desc">${t.desc}</div>
+        <div class="tema-palette">
+          <div class="tema-palette-dot" style="background:${t.c1};"></div>
+          <div class="tema-palette-dot" style="background:${t.c3};"></div>
+          <div class="tema-palette-dot" style="background:${t.c4};border:1px solid #333;"></div>
+          <div class="tema-palette-dot" style="background:${t.c6};border:1px solid #333;"></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function aplicarTema(id) {
+  const t = TEMAS.find(x => x.id === id);
+  if (!t) return;
+  temaActivo = id;
+
+  // Aplicar colores
+  const map = { c1: t.c1, c2: t.c2, c3: t.c3, c4: t.c4, c5: t.c5, c6: t.c6 };
+  COLOR_KEYS.forEach(k => {
+    const hexEl = document.getElementById('hex-' + k);
+    const nativeEl = document.getElementById('native-' + k);
+    const swatchEl = document.getElementById('swatch-' + k);
+    if (hexEl) hexEl.value = map[k];
+    if (nativeEl) nativeEl.value = map[k];
+    if (swatchEl) swatchEl.style.background = map[k];
+  });
+  updatePreview(map);
+
+  // Aplicar fuentes
+  if (document.getElementById('font-display')) {
+    document.getElementById('font-display').value = t.font_display;
+    document.getElementById('font-body').value = t.font_body;
+    document.getElementById('font-mono').value = t.font_mono;
+    previewFonts();
+  }
+
+  // Aplicar efecto
+  if (document.getElementById('efectoGrid')) selectEfecto(t.efecto);
+
+  // Aplicar btn style
+  if (document.getElementById('btn-style')) document.getElementById('btn-style').value = t.btn_style;
+
+  // Aplicar border radius
+  if (document.getElementById('border-radius')) document.getElementById('border-radius').value = t.border_radius;
+
+  // Update preview card
+  updatePreviewCard(t);
+
+  // Re-render tema cards
+  renderTemas();
+  toast('✓ Tema "' + t.nombre + '" aplicado. Guarda los cambios para activarlo.');
+}
+
+function updatePreviewCard(t) {
+  const card = document.getElementById('temaPreviewCard');
+  if (!card) return;
+  card.style.background = t.c4;
+  const logo = document.getElementById('tprev-logo');
+  if (logo) logo.style.color = t.c6;
+  const tag = document.getElementById('tprev-tag');
+  if (tag) tag.style.color = t.c1;
+  const accent = document.getElementById('tprev-accent');
+  if (accent) accent.style.color = t.c1;
+  const btn = document.getElementById('tprev-btn');
+  if (btn) { btn.style.color = t.c1; btn.style.borderColor = t.c1; }
+  const mn = document.querySelectorAll('.tprev-mn');
+  mn.forEach(el => el.style.color = t.c1);
+  // update nav background
+  const nav = document.querySelector('.tprev-nav');
+  if (nav) nav.style.background = t.c5;
+  const svcs = document.querySelector('.tprev-services');
+  if (svcs) svcs.style.background = t.c5;
+}
+
+// ============================================================
+// EFECTOS
+// ============================================================
+let efectoActivo = 'grid';
+
+function selectEfecto(id) {
+  efectoActivo = id;
+  document.querySelectorAll('.efecto-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.efecto === id);
+  });
+}
+
+// ============================================================
+// TIPOGRAFÍA — PREVIEW EN VIVO
+// ============================================================
+function previewFonts() {
+  const display = document.getElementById('font-display');
+  const body = document.getElementById('font-body');
+  const mono = document.getElementById('font-mono');
+  if (!display) return;
+
+  const dFont = display.value;
+  const bFont = body.value;
+  const mFont = mono.value;
+  const size = parseInt(document.getElementById('font-size-base').value) || 15;
+
+  // Load fonts dynamically
+  const allFonts = [dFont, bFont, mFont].map(f => f.replace(/ /g, '+')).join('|');
+  let link = document.getElementById('dynamic-font-link');
+  if (!link) {
+    link = document.createElement('link');
+    link.id = 'dynamic-font-link';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }
+  link.href = `https://fonts.googleapis.com/css2?family=${dFont.replace(/ /g,'+')}&family=${bFont.replace(/ /g,'+')}&family=${mFont.replace(/ /g,'+')}&display=swap`;
+
+  const prev_d = document.getElementById('font-preview-display');
+  const prev_b = document.getElementById('font-preview-body');
+  const prev_m = document.getElementById('font-preview-mono');
+  if (prev_d) prev_d.style.fontFamily = `'${dFont}', sans-serif`;
+  if (prev_b) { prev_b.style.fontFamily = `'${bFont}', sans-serif`; prev_b.style.fontSize = size + 'px'; }
+  if (prev_m) prev_m.style.fontFamily = `'${mFont}', monospace`;
+}
+
+// ============================================================
+// EXTEND initDisenoPanel — now also initializes tabs & temas
+// ============================================================
+const _origInitDisenoPanel = initDisenoPanel;
+initDisenoPanel = function() {
+  _origInitDisenoPanel();
+  renderTemas();
+  // Apply preview card with current active tema
+  const t = TEMAS.find(x => x.id === temaActivo);
+  if (t) updatePreviewCard(t);
+  // Initialize font preview
+  setTimeout(previewFonts, 100);
+};
+
+// ============================================================
+// EXTEND collectDisenoData — include new fields
+// ============================================================
+const _origCollectDisenoData = collectDisenoData;
+collectDisenoData = function() {
+  const base = _origCollectDisenoData();
+  // Add extended fields
+  const fontDisplay = document.getElementById('font-display');
+  const fontBody = document.getElementById('font-body');
+  const fontMono = document.getElementById('font-mono');
+  const fontSize = document.getElementById('font-size-base');
+  const bRadius = document.getElementById('border-radius');
+  const sSpacing = document.getElementById('section-spacing');
+  const maxW = document.getElementById('max-width');
+  const navH = document.getElementById('nav-height');
+  const btnStyle = document.getElementById('btn-style');
+  const cardHover = document.getElementById('card-hover');
+  const transSpeed = document.getElementById('transition-speed');
+  const shadowStyle = document.getElementById('shadow-style');
+  const marqueeSpeed = document.getElementById('marquee-speed');
+  const marqueeSep = document.getElementById('marquee-sep');
+  const heroAnim = document.getElementById('hero-animation');
+
+  return Object.assign(base, {
+    tema_id: temaActivo,
+    font_display: fontDisplay ? fontDisplay.value : 'Bebas Neue',
+    font_body: fontBody ? fontBody.value : 'DM Sans',
+    font_mono: fontMono ? fontMono.value : 'JetBrains Mono',
+    font_size_base: fontSize ? parseInt(fontSize.value) : 15,
+    border_radius: bRadius ? parseInt(bRadius.value) : 2,
+    section_spacing: sSpacing ? sSpacing.value : 'normal',
+    max_width: maxW ? maxW.value : '1280px',
+    nav_height: navH ? navH.value : '72px',
+    efecto_hero: efectoActivo,
+    efecto_opacity: document.getElementById('efecto-opacity') ? parseInt(document.getElementById('efecto-opacity').value) : 60,
+    btn_style: btnStyle ? btnStyle.value : 'filled',
+    card_hover: cardHover ? cardHover.value : 'lift',
+    transition_speed: transSpeed ? transSpeed.value : 'normal',
+    shadow_style: shadowStyle ? shadowStyle.value : 'subtle',
+    marquee_speed: marqueeSpeed ? marqueeSpeed.value : 'normal',
+    marquee_sep: marqueeSep ? marqueeSep.value : 'dot',
+    hero_animation: heroAnim ? heroAnim.value : 'fade-up',
+  });
+};
+
+</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+{
+    "empresa": {
+        "nombre": "SYS CODI7",
+        "slogan": "Código · Sistemas · Soluciones",
+        "descripcion": "Código limpio, sistemas robustos y soluciones que escalan.",
+        "historia": "Somos una empresa de desarrollo de software ubicada en Chincha Alta, Ica. Nacimos con la misión de transformar ideas en productos digitales de alta calidad, accesibles para empresas y emprendedores de la región.",
+        "historia2": "Trabajamos con tecnologías modernas y metodologías ágiles para entregar soluciones que realmente funcionan. Cada proyecto es una oportunidad de superar expectativas.",
+        "anios": "5+",
+        "hero_tag": "Desarrollo de software · Ica, Perú",
+        "hero_titulo_1": "Transfor",
+        "hero_titulo_2": "mamos",
+        "hero_titulo_3": "ideas"
+    },
+    "contacto": {
+        "correo": "syscodi7@gmail.com",
+        "whatsapp": "+51 922 857 548",
+        "whatsapp_url": "https://wa.me/51922857548",
+        "ubicacion": "Chincha Alta, Ica — Perú"
+    },
+    "metricas": [
+        {
+            "num": "50+",
+            "label": "Proyectos"
+        },
+        {
+            "num": "30+",
+            "label": "Clientes"
+        },
+        {
+            "num": "5+",
+            "label": "Años"
+        }
+    ],
+    "servicios": [
+        {
+            "id": 1,
+            "num": "01",
+            "icono": "🌐",
+            "titulo": "Desarrollo Web",
+            "descripcion": "Sitios web modernos, rápidos y optimizados para SEO. Desde landing pages hasta plataformas completas.",
+            "activo": true
+        },
+        {
+            "id": 2,
+            "num": "02",
+            "icono": "📱",
+            "titulo": "Apps Móviles",
+            "descripcion": "Aplicaciones Android e iOS con diseño intuitivo y rendimiento nativo.",
+            "activo": true
+        },
+        {
+            "id": 3,
+            "num": "03",
+            "icono": "🖥️",
+            "titulo": "Sistemas a Medida",
+            "descripcion": "Software empresarial personalizado: ERP, CRM, facturación electrónica y más.",
+            "activo": true
+        }
+    ],
+    "portafolio": [],
+    "valores": [
+        {
+            "label": "Calidad",
+            "texto": "Código limpio y bien documentado en cada entrega."
+        },
+        {
+            "label": "Puntualidad",
+            "texto": "Cumplimos plazos sin comprometer la calidad."
+        },
+        {
+            "label": "Comunicación",
+            "texto": "Actualizaciones constantes durante todo el proyecto."
+        },
+        {
+            "label": "Soporte",
+            "texto": "Acompañamiento post-entrega y mantenimiento continuo."
+        }
+    ],
+    "servicios_form": [
+        "Desarrollo Web",
+        "App Móvil",
+        "Sistema a Medida",
+        "Consultoría",
+        "Mantenimiento",
+        "Otro"
+    ],
+    "diseno": {
+        "logo_tipo": "texto",
+        "logo_url": "",
+        "logo_ancho": 140,
+        "color_primario": "#0f0f0f",
+        "color_primario_light": "#333333",
+        "color_acento": "#0066cc",
+        "color_bg": "#fafaf8",
+        "color_bg2": "#f2f2f0",
+        "color_texto": "#1a1a1a",
+        "tema_id": "minimal-white",
+        "font_display": "Playfair Display",
+        "font_body": "Mulish",
+        "font_mono": "IBM Plex Mono",
+        "font_size_base": 15,
+        "border_radius": 4,
+        "section_spacing": "normal",
+        "max_width": "1280px",
+        "nav_height": "72px",
+        "efecto_hero": "none",
+        "efecto_opacity": 60,
+        "btn_style": "filled",
+        "card_hover": "lift",
+        "transition_speed": "normal",
+        "shadow_style": "subtle",
+        "marquee_speed": "normal",
+        "marquee_sep": "dot",
+        "hero_animation": "fade-up"
+    },
+    "marquee": [
+        "Desarrollo Web",
+        "Apps Móviles",
+        "Sistemas a Medida",
+        "React",
+        "Laravel",
+        "Node.js",
+        "Flutter",
+        "MySQL",
+        "Diseño UI/UX",
+        "SEO",
+        "Hosting",
+        "Soporte 24/7"
+    ]
+}

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /data/
+
+# Sitemap
+Sitemap: https://syscodi7.com/sitemap.xml
